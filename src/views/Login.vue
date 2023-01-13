@@ -52,7 +52,7 @@
 import { ref, onMounted } from "vue";
 import { userStore } from "@/stores/user";
 import { get, post } from "@/api/request";
-import { routerKey } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const companyName = ref("your company name");
 const form = ref(false);
@@ -60,6 +60,9 @@ const loading = ref(false);
 const email = ref("");
 const password = ref("");
 const user = userStore();
+
+const router = useRouter();
+const route = useRoute();
 
 async function onSubmit() {
   if (!form) return;
@@ -80,34 +83,12 @@ async function login() {
       collection: "login",
     });
     if (!res) throw Error();
-    await setToken(res);
-    const setUserInfo = await getMe();
-    console.log(setUserInfo);
+    await user.setToken(res);
+    const setUserInfo = await user.getMe();
     if (!setUserInfo) return;
-    this.$router.push({ name: "UserIndex" });
+    router.push({ name: "UserIndex" });
   } catch (error) {
-    return false;
-  }
-}
-async function setToken(payload) {
-  localStorage.setItem(
-    `${import.meta.env.VITE_TOKEN_ID}`,
-    payload.access_token
-  );
-  localStorage.setItem(
-    `${import.meta.env.VITE_TOKEN_ID}_refresh`,
-    payload.refresh_token
-  );
-  console.log("set token:", payload);
-}
-async function getMe() {
-  try {
-    const data = await get({ type: "users", collection: "me" });
-    if (!data) throw Error();
-    user.info = data;
-    console.log("user", data);
-    return true;
-  } catch (error) {
+    user.removeToken();
     return false;
   }
 }
