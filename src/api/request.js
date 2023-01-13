@@ -12,7 +12,6 @@ export const get = async ({
   params = { fields: "*,files.*" },
 }) => {
   const token = localStorage.getItem(`${import.meta.env.VITE_TOKEN_ID}`);
-  console.log("get token", token);
   if (token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }

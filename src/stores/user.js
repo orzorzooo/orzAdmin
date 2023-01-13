@@ -36,5 +36,12 @@ export const userStore = defineStore("user", {
         return false;
       }
     },
+    async authenticated() {
+      const token = localStorage.getItem(`${import.meta.env.VITE_TOKEN_ID}`);
+      if (!token) return false;
+      const getMe = await this.getMe();
+      if (!getMe) return false;
+      return true;
+    },
   },
 });

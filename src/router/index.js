@@ -37,16 +37,14 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-  if (to.name !== "Login") {
-    const user = userStore(pinia);
+  const user = userStore();
+  const auth = await user.authenticated();
+  if (to.name !== "Login" && !auth) {
+    console.log("router guard fail");
     return { name: "Login" };
+  } else if (to.name == "Login" && auth) {
+    return { name: "UserIndex" };
   }
-  // const auth = authenticated();
-  // if (!auth && to.name !== "Login") {
-  //   return { name: "Login" };
-  // }
-  // ...
-  // 返回 false 以取消导航
   // return false;
 });
 
