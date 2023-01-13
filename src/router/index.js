@@ -1,6 +1,6 @@
 // Composables
 import { createRouter, createWebHistory } from "vue-router";
-
+import { userStore } from "@/stores/user";
 const routes = [
   {
     path: "/",
@@ -34,6 +34,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach(async (to, from) => {
+  if (to.name !== "Login") {
+    const user = userStore(pinia);
+    return { name: "Login" };
+  }
+  // const auth = authenticated();
+  // if (!auth && to.name !== "Login") {
+  //   return { name: "Login" };
+  // }
+  // ...
+  // 返回 false 以取消导航
+  // return false;
 });
 
 export default router;

@@ -5,7 +5,6 @@ import { globalStore } from "@/stores/global";
 // for directus封裝
 
 // 取pinia的全域
-const global = globalStore();
 
 export const get = async ({
   type = "items",
@@ -87,6 +86,7 @@ function onError(error) {
 }
 
 function handleErrorMsg(status) {
+  const global = globalStore();
   const map = {
     401: "登入資料錯誤",
   };
