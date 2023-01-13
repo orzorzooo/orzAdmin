@@ -1,7 +1,12 @@
 import axios from "axios";
 export const BASEURL = `${import.meta.env.VITE_BASE_API}`;
+import { globalStore } from "@/stores/global";
 // const xsrfHeaderName = "Authorization";
 // for directus封裝
+
+// 取pinia的全域
+const global = globalStore();
+
 export const get = async ({
   type = "items",
   collection = "",
@@ -19,19 +24,12 @@ export const get = async ({
         params,
       }
     );
-    console.log(
-      `%cGET ${status}`,
-      "font-weight:bold;border:1px solid white;padding:0.3rem 1rem;background-color:green;border-radius:1rem"
-    );
-    console.log(data);
-
+    onSuccess(data, status);
     return data.data;
   } catch (error) {
-    console.log(
-      `%cGET ${error.response.status}`,
-      "font-weight:bold;border:1px solid white;padding:0.3rem 1rem;background-color:red;border-radius:1rem"
-    );
-    console.log(error.message);
+    onError(error);
+    handleErrorMsg(error.response.status);
+    return false;
   }
 };
 
@@ -50,19 +48,11 @@ export const post = async ({
       `${BASEURL}/${type}/${collection}`,
       inpudata
     );
-    console.log(
-      `%cGET ${status}`,
-      "font-weight:bold;border:1px solid white;padding:0.3rem 1rem;background-color:green;border-radius:1rem"
-    );
-    console.log(data);
-
+    onSuccess(data, status);
     return data.data;
   } catch (error) {
-    console.log(
-      `%cGET ${error.response.status}`,
-      "font-weight:bold;border:1px solid white;padding:0.3rem 1rem;background-color:red;border-radius:1rem"
-    );
-    console.log(error.response.data.errors[0].message);
+    onError(error);
+    handleErrorMsg(error.response.status);
     return false;
   }
 };
@@ -80,3 +70,27 @@ export const assetURL = (
     : [];
   return `${BASEURL}/assets/${assetID}?${quality}${width}${transforms}`;
 };
+function onSuccess(data, status) {
+  console.log(
+    `%cGET ${status}`,
+    "font-weight:bold;border:1px solid white;padding:0.3rem 1rem;background-color:green;border-radius:1rem"
+  );
+  console.log(data);
+}
+
+function onError(error) {
+  console.log(
+    `%cGET ${error.response.status}`,
+    "font-weight:bold;border:1px solid white;padding:0.3rem 1rem;background-color:red;border-radius:1rem"
+  );
+  console.log(error.response.data.errors[0].message);
+}
+
+function handleErrorMsg(status) {
+  const map = {
+    401: "登入資料錯誤",
+  };
+  global.text = map[status];
+  global.show = true;
+  return map[status] ? map[status] : "系統錯誤";
+}
