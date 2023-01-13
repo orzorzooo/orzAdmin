@@ -9,9 +9,6 @@ export const userStore = defineStore("user", {
     info: null,
   }),
   actions: {
-    fuck() {
-      console.log("print ffuck");
-    },
     async setToken(payload) {
       localStorage.setItem(
         `${import.meta.env.VITE_TOKEN_ID}`,
